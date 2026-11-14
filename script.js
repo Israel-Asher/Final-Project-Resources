@@ -221,13 +221,15 @@ async function fetchMovies(query) {
     }
 
     console.warn("OMDb search failed; showing matching sample results.", error);
-    currentMovies = fallbackMovies.filter((movie) =>
+    const matches = fallbackMovies.filter((movie) =>
       movie.Title.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    // Never leave the page empty: show all samples if nothing matches.
+    currentMovies = matches.length ? matches : [...fallbackMovies];
 
-    resultsInfo.textContent = currentMovies.length
+    resultsInfo.textContent = matches.length
       ? `Showing sample results for: ${searchTerm} (OMDb unavailable)`
-      : `OMDb unavailable; no sample results for: ${searchTerm}`;
+      : `OMDb unavailable; showing sample movies`;
     displayMovies(sortMovies(currentMovies, sortSelect.value));
   }
 }
